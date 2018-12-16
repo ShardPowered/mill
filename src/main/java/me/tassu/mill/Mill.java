@@ -29,15 +29,14 @@ import lombok.val;
 import me.tassu.easy.EasyPlugin;
 import me.tassu.easy.register.core.RegisterProvider;
 import me.tassu.mill.parser.MillParser;
-import me.tassu.mill.parser.ParsedSubCommand;
+import me.tassu.mill.register.MillCommandInstance;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Mill implements RegisterProvider {
 
-    private Set<ParsedSubCommand> parsed;
+    private MillParser parser;
 
     private Mill(String pkg) {
         try {
@@ -48,7 +47,8 @@ public class Mill implements RegisterProvider {
                     .map(it -> (Class<?>) it)
                     .collect(Collectors.toSet());
 
-            parsed = new MillParser().parse(classes);
+            parser = new MillParser();
+            parser.parse(classes);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -68,6 +68,9 @@ public class Mill implements RegisterProvider {
 
     @Override
     public Object[] getRegistrables() {
-        return new Object[] {};
+        return parser.getTopLevelCommands()
+                .stream()
+                .map(it -> new MillCommandInstance(it, this))
+                .toArray(Object[]::new);
     }
 }

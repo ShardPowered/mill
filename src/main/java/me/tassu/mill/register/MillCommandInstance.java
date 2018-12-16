@@ -24,6 +24,7 @@
 
 package me.tassu.mill.register;
 
+import com.google.common.base.MoreObjects;
 import me.tassu.easy.register.command.Command;
 import me.tassu.easy.register.command.error.CommandException;
 import me.tassu.easy.register.core.NotSingleton;
@@ -35,11 +36,20 @@ import java.util.List;
 @NotSingleton
 public class MillCommandInstance extends Command {
 
+    private String name;
     private Mill mill;
 
     public MillCommandInstance(String name, Mill mill) {
         super(name);
+        this.name = name;
         this.mill = mill;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("name", name)
+                .toString();
     }
 
     @Override

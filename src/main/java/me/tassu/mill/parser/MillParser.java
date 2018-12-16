@@ -33,12 +33,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MillParser {
 
-    public Set<ParsedSubCommand> parse(Set<? extends Class<?>> classes) {
+    private Set<ParsedSubCommand> parsed;
+
+    public void parse(Set<? extends Class<?>> classes) {
         val subCommandClasses = Sets.<Class<?>>newHashSet();
 
         for (Class<?> aClass : classes) {
@@ -91,7 +93,7 @@ public class MillParser {
             }
         }
 
-        return commands;
+        this.parsed = commands;
     }
 
     private Set<ParsedSubCommand> parseMethod(Command command, Class<?> aClass, Method method, boolean subCommand) {
@@ -151,6 +153,19 @@ public class MillParser {
         }
 
         return in;
+    }
+
+    public Set<ParsedSubCommand> getAllParsedSubCommands() {
+        return parsed;
+    }
+
+    public Set<String> getTopLevelCommands() {
+        return parsed.stream()
+                .map(ParsedSubCommand::getAlias)
+                .map(it -> it.split(" ", 2))
+                .filter(it -> it.length > 0)
+                .map(it -> it[0])
+                .collect(Collectors.toSet());
     }
 
 }

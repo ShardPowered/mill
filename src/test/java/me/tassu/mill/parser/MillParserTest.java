@@ -29,7 +29,6 @@ import lombok.val;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class MillParserTest {
@@ -43,10 +42,6 @@ public class MillParserTest {
                 .collect(Collectors.toSet());
 
         val parser = new MillParser();
-        val result = parser.parse(classes);
-
-        result.stream()
-                .sorted(Comparator.comparing(ParsedSubCommand::getAlias))
-                .forEach(System.out::println);
+        parser.parse(classes);
     }
 }
