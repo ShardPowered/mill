@@ -1,0 +1,54 @@
+plugins {
+    id 'java'
+    id 'net.minecrell.licenser' version '0.4.1'
+    id 'io.franzbecker.gradle-lombok' version '1.14'
+}
+
+group 'me.tassu'
+version '1.0.0'
+defaultTasks 'licenseFormat', 'build'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://maven.tassu.me/'
+        name 'tassu-repo'
+    }
+    maven {
+        name 'sponge'
+        url 'https://repo.spongepowered.org/maven'
+    }
+    maven {
+        name 'paper-repo'
+        url 'https://papermc.io/repo/repository/maven-public'
+    }
+    maven {
+        name 'sonatype'
+        url 'https://oss.sonatype.org/content/groups/public/'
+    }
+    maven {
+        name 'aikar-repo'
+        url "https://ci.emc.gs/nexus/content/groups/aikar/"
+    }
+}
+
+dependencies {
+    compileOnly "me.tassu:easy:1.1.1"
+    compileOnly 'me.tassu:snake:1.1.0'
+    compileOnly 'com.destroystokyo.paper:paper-api:1.13.2-R0.1-SNAPSHOT'
+
+    testCompile 'com.destroystokyo.paper:paper-api:1.13.2-R0.1-SNAPSHOT'
+    testCompile 'junit:junit:4.12'
+}
+
+jar {
+    from 'LICENSE'
+}
+
+license {
+    header = project.file('LICENSE')
+    include '**/*.java'
+    newLine = true
+}
