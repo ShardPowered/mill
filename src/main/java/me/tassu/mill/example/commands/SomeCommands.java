@@ -22,16 +22,18 @@
  * SOFTWARE.
  */
 
-package example;
+package me.tassu.mill.example.commands;
 
+import com.google.inject.Singleton;
 import me.tassu.mill.api.ann.Command;
 
+@Singleton
 public class SomeCommands {
 
     @Command({"foo foo"})
-    public void foo() {}
+    public void foo(String stuff, int number) {}
 
-    @Command({"foo bar", "example bar"})
+    @Command({"foo bar", "/great bar"})
     public void bar() {}
 
 }

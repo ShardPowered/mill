@@ -22,26 +22,24 @@
  * SOFTWARE.
  */
 
-package me.tassu.mill.parser;
+package me.tassu.mill.example.commands;
 
-import com.google.common.reflect.ClassPath;
-import lombok.val;
-import org.junit.Test;
+import com.google.inject.Singleton;
+import me.tassu.mill.api.ann.Command;
+import me.tassu.snake.util.Chat;
+import org.bukkit.command.CommandSender;
 
-import java.io.IOException;
-import java.util.stream.Collectors;
+@Singleton
+public class ExampleSubcommands {
 
-public class MillParserTest {
-    @Test
-    public void testExample() throws IOException {
-        val classes = ClassPath.from(getClass().getClassLoader())
-                .getTopLevelClasses("example")
-                .stream()
-                .map(ClassPath.ClassInfo::load)
-                .map(it -> (Class<?>) it)
-                .collect(Collectors.toSet());
-
-        val parser = new MillParser();
-        parser.parse(classes);
+    @Command({"fun"})
+    public void onCommand(CommandSender sender, int number) {
+        sender.sendMessage(Chat.PURPLE + "That number is: " + number);
     }
+
+    @Command({"/asdf asd", "yeah", "/asdf"})
+    public void doThatCommand() {}
+
+    public void execute() {}
+
 }

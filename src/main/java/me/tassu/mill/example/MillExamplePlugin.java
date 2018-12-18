@@ -22,14 +22,16 @@
  * SOFTWARE.
  */
 
-package me.tassu.mill.api.ann;
+package me.tassu.mill.example;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import me.tassu.easy.EasyPlugin;
+import me.tassu.mill.Mill;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+public class MillExamplePlugin extends EasyPlugin {
 
-@Target({METHOD})
-@Retention(RUNTIME)
-public @interface RequiredPlayer {}
+    @Override
+    protected void init() {
+        Mill.create("me.tassu.mill.example.commands", this)
+                .register();
+    }
+}

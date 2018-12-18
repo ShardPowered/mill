@@ -161,10 +161,7 @@ public class MillParser {
 
     public Set<String> getTopLevelCommands() {
         return parsed.stream()
-                .map(ParsedSubCommand::getAlias)
-                .map(it -> it.split(" ", 2))
-                .filter(it -> it.length > 0)
-                .map(it -> it[0])
+                .map(ParsedSubCommand::getTopLevelCommand)
                 .collect(Collectors.toSet());
     }
 

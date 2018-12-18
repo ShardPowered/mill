@@ -22,15 +22,18 @@
  * SOFTWARE.
  */
 
-package example;
+package me.tassu.mill.example.commands;
 
+import com.google.inject.Singleton;
 import me.tassu.mill.api.ann.Command;
 import me.tassu.mill.api.ann.SubCommandFrom;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
-@Command({"example"})
-@SubCommandFrom("example.ExampleSubcommands")
+@Singleton
+@Command({"great"})
+@SubCommandFrom("me.tassu.mill.example.commands.ExampleSubcommands")
 public class ExampleCommand {
 
     @Command("yes")
@@ -38,6 +41,8 @@ public class ExampleCommand {
         Bukkit.broadcastMessage(ChatColor.AQUA + message);
     }
 
-    public void execute() {}
+    public void execute(CommandSender sender) {
+        sender.sendMessage(sender.getName());
+    }
 
 }

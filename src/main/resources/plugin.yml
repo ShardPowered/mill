@@ -1,0 +1,3 @@
+name: MillExample
+main: me.tassu.mill.example.MillExamplePlugin
+version: 1

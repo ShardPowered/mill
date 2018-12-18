@@ -24,6 +24,7 @@
 
 package me.tassu.mill.parser;
 
+import com.google.common.base.MoreObjects;
 import lombok.Getter;
 import me.tassu.mill.util.ClassUtil;
 
@@ -31,14 +32,15 @@ import java.lang.reflect.Method;
 
 public class ParsedSubCommand {
 
+    @Getter
     private Method method;
 
     @Getter
     private String alias;
 
     public ParsedSubCommand(Method method, String alias) {
-        if (alias.startsWith("/")) {
-            throw new RuntimeException("Alias starts with a slash.");
+        if (alias.startsWith("/") || alias.isEmpty()) {
+            throw new RuntimeException("Invalid alias.");
         }
 
         this.method = method;
@@ -47,10 +49,14 @@ public class ParsedSubCommand {
 
     @Override
     public String toString() {
-        return "ParsedSubCommand{\n" +
-                "  method='" + getMethodName() + "'\n" +
-                "  alias='/" + alias + "'\n" +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("method", getMethodName())
+                .add("alias", alias)
+                .toString();
+    }
+
+    public String getTopLevelCommand() {
+        return alias.split(" ", 2)[0];
     }
 
     @Override

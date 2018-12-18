@@ -24,36 +24,66 @@
 
 package me.tassu.mill.register;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Lists;
+import lombok.val;
 import me.tassu.easy.register.command.Command;
 import me.tassu.easy.register.command.error.CommandException;
 import me.tassu.easy.register.core.NotSingleton;
 import me.tassu.mill.Mill;
+import me.tassu.snake.util.Chat;
 import org.bukkit.command.CommandSender;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @NotSingleton
 public class MillCommandInstance extends Command {
 
-    private String name;
     private Mill mill;
 
-    public MillCommandInstance(String name, Mill mill) {
-        super(name);
-        this.name = name;
+    public MillCommandInstance(Mill mill, Set<String> aliases) {
+        super(aliases.stream().findFirst().orElse("wtf"));
+        this.setAliases(Lists.newArrayList(aliases));
         this.mill = mill;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("name", name)
+                .add("aliases", getAliases())
                 .toString();
     }
 
     @Override
     protected void run(CommandSender sender, String label, List<String> args) throws CommandException {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        val contexts = mill.match(sender,(label + " " + joinArgs(args)).trim());
+
+        if (contexts.size() != 1) {
+            sender.sendMessage(Chat.RED + "command not found"); // whoops!
+            return;
+        }
+
+        val context = contexts.stream().findFirst().orElse(null);
+        val command = Objects.requireNonNull(context).getCommand();
+
+        val instance =
+                mill.getPlugin().getUnsafeInjector().getInstance(command.getMethod().getDeclaringClass());
+
+        try {
+            command.getMethod().invoke(instance, context.getArgs());
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            // TODO handle error
+            throw new RuntimeException("Failure executing command " + command.getAlias() + " at " + command.getMethodName(),
+                    e);
+        }
+    }
+
+    private String joinArgs(List<String> args) {
+        return Joiner.on(' ').join(args).trim();
     }
 }

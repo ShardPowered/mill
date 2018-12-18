@@ -22,21 +22,13 @@
  * SOFTWARE.
  */
 
-package example;
+package me.tassu.mill.api.type;
 
-import me.tassu.mill.api.ann.Command;
-import org.bukkit.command.CommandSender;
+public interface TypeAdapter {
 
-public class ExampleSubcommands {
+    Class<?> getType();
 
-    @Command({"fun"})
-    public void onCommand(CommandSender sender) {
-        sender.sendMessage("yes. ");
-    }
-
-    @Command({"/asdf asd", "yeah", "/asdf"})
-    public void doThatCommand() {}
-
-    public void execute() {}
+    Object convert(String argument);
+    boolean matches(String argument);
 
 }
