@@ -30,7 +30,6 @@ import com.google.inject.Singleton;
 import lombok.Getter;
 import lombok.val;
 import me.tassu.easy.EasyPlugin;
-import me.tassu.easy.log.Log;
 import me.tassu.easy.register.core.NotSingleton;
 import me.tassu.easy.register.core.RegisterProvider;
 import me.tassu.mill.api.type.TypeAdapter;
@@ -52,21 +51,21 @@ public class Mill implements RegisterProvider {
 
     private MillParser parser;
 
-    private Mill(String pkg, EasyPlugin plugin) {
+    private Mill(EasyPlugin plugin, String[] pkgs) {
         try {
             this.plugin = plugin;
 
-            val classes = ClassPath.from(getClass().getClassLoader())
-                    .getTopLevelClasses(pkg)
-                    .stream()
-                    .map(ClassPath.ClassInfo::load)
-                    .map(it -> (Class<?>) it)
-                    .peek(it -> {
-                        if (!it.isAnnotationPresent(Singleton.class) && !it.isAnnotationPresent(NotSingleton.class)) {
-                            plugin.getUnsafeInjector().getInstance(Log.class).error(it.getName() + " is not a singleton.");
-                        }
-                    })
-                    .collect(Collectors.toSet());
+            val classes = Sets.<Class<?>>newHashSet();
+
+            for (String pkg : pkgs) {
+                classes.addAll(ClassPath.from(getClass().getClassLoader())
+                        .getTopLevelClasses(pkg)
+                        .stream()
+                        .map(ClassPath.ClassInfo::load)
+                        .map(it -> (Class<?>) it)
+                        .filter(it -> it.isAnnotationPresent(Singleton.class) || it.isAnnotationPresent(NotSingleton.class))
+                        .collect(Collectors.toSet()));
+            }
 
             parser = new MillParser();
             parser.parse(classes);
@@ -79,8 +78,8 @@ public class Mill implements RegisterProvider {
      * Creates a new Mill instance
      * @return a new instance
      */
-    public static Mill create(String pkg, EasyPlugin plugin) {
-        return new Mill(pkg, plugin);
+    public static Mill create(EasyPlugin plugin, String... pkgs) {
+        return new Mill(plugin, pkgs);
     }
 
     public Mill withTypeAdapter(TypeAdapter adapter) {

@@ -31,7 +31,7 @@ public class MillExamplePlugin extends EasyPlugin {
 
     @Override
     protected void init() {
-        Mill.create("me.tassu.mill.example.commands", this)
+        Mill.create(this, "me.tassu.mill.example.commands")
                 .register();
     }
 }
